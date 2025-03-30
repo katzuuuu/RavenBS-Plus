@@ -32,9 +32,9 @@ public class MobESP extends Module {
     }
 
     private void renderMob(Entity entity, int n) {
-        RenderUtils.renderEntity(entity, 2, 0.0, 0.0, n, false);
+        RenderUtils.renderEntity(entity, 2, 0.0, 0.0, n, false, 0D);
         if (healthBar.isToggled()) {
-            RenderUtils.renderEntity(entity, 4, 0.0, 0.0, n, false);
+            RenderUtils.renderEntity(entity, 4, 0.0, 0.0, n, false, 0D);
         }
     }
 

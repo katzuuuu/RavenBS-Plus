@@ -33,6 +33,7 @@ public class PlayerESP extends Module {
     public SliderSetting red;
     public SliderSetting green;
     public SliderSetting blue;
+    public SliderSetting healthBarWidth;
     public ButtonSetting teamColor;
     public ButtonSetting rainbow;
     public GroupSetting espTypes;
@@ -67,6 +68,7 @@ public class PlayerESP extends Module {
         this.registerSetting(blue = new SliderSetting("Blue", 0.0D, 0.0D, 255.0D, 1.0D));
         this.registerSetting(rainbow = new ButtonSetting("Rainbow", false));
         this.registerSetting(healthBar = new ButtonSetting("Health bar", true));
+        this.registerSetting(healthBarWidth = new SliderSetting("Healthbar Width", 0.1D, 0.1D, 0.5D, 0.1D));
         this.registerSetting(redOnDamage = new ButtonSetting("Red on damage", true));
         this.registerSetting(renderSelf = new ButtonSetting("Render self", false));
         this.registerSetting(teamColor = new ButtonSetting("Team color", false));
@@ -151,21 +153,21 @@ public class PlayerESP extends Module {
 
     private void render(Entity en, int rgb) {
         if (box.isToggled()) {
-            RenderUtils.renderEntity(en, 1, 0, 0, rgb, redOnDamage.isToggled());
+            RenderUtils.renderEntity(en, 1, 0, 0, rgb, redOnDamage.isToggled(), healthBarWidth.getInput());
         }
 
         if (shaded.isToggled()) {
             if (ModuleManager.murderMystery == null || !ModuleManager.murderMystery.isEnabled() || ModuleManager.murderMystery.isEmpty()) {
-                RenderUtils.renderEntity(en, 2, 0, 0, rgb, redOnDamage.isToggled());
+                RenderUtils.renderEntity(en, 2, 0, 0, rgb, redOnDamage.isToggled(), healthBarWidth.getInput());
             }
         }
 
         if (healthBar.isToggled()) {
-            RenderUtils.renderEntity(en, 4, 0, 0, rgb, redOnDamage.isToggled());
+            RenderUtils.renderEntity(en, 4, 0, 0, rgb, redOnDamage.isToggled(), healthBarWidth.getInput());
         }
 
         if (ring.isToggled()) {
-            RenderUtils.renderEntity(en, 6, 0, 0, rgb, redOnDamage.isToggled());
+            RenderUtils.renderEntity(en, 6, 0, 0, rgb, redOnDamage.isToggled(), healthBarWidth.getInput());
         }
     }
 

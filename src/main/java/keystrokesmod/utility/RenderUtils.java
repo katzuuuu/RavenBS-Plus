@@ -219,7 +219,7 @@ public class RenderUtils {
         mc.fontRendererObj.drawString(s, (float)(scaledResolution.getScaledWidth() / 2 - mc.fontRendererObj.getStringWidth(s) / 2), (float)(scaledResolution.getScaledHeight() / 2 + 15), n, false);
     }
 
-    public static void renderEntity(Entity e, int type, double expand, double shift, int color, boolean damage) {
+    public static void renderEntity(Entity e, int type, double expand, double shift, int color, boolean damage, double width) {
         if (e instanceof EntityLivingBase) {
             float partialTicks = ((IAccessorMinecraft) mc).getTimer().renderPartialTicks;;
             double x = e.lastTickPosX + (e.posX - e.lastTickPosX) * (double) partialTicks - mc.getRenderManager().viewerPosX;
@@ -258,7 +258,7 @@ public class RenderUtils {
                 GlStateManager.enableDepth();
             } else {
                 int i;
-                if (type == 4) {
+                if (type == 4) { //healthbar
                     EntityLivingBase en = (EntityLivingBase) e;
                     double r = en.getHealth() / en.getMaxHealth();
                     int b = (int) (74.0D * r);
@@ -268,9 +268,10 @@ public class RenderUtils {
                     GlStateManager.disableDepth();
                     GL11.glScalef(0.03F + d, 0.03F + d, 0.03F + d);
                     i = (int) (21 + shift * 2);
-                    net.minecraft.client.gui.Gui.drawRect(i, -1, i + 4, 75, Color.black.getRGB());
-                    net.minecraft.client.gui.Gui.drawRect(i + 1, b, i + 3, 74, Color.darkGray.getRGB());
-                    net.minecraft.client.gui.Gui.drawRect(i + 1, 0, i + 3, b, hc);
+                    int pixelWidth = (int)(width * 10);
+                    net.minecraft.client.gui.Gui.drawRect(i, -2, i + pixelWidth + 2, 75, Color.black.getRGB()); //outline
+                    net.minecraft.client.gui.Gui.drawRect(i + 1, b, i + pixelWidth + 1, 74, Color.darkGray.getRGB()); //inner
+                    net.minecraft.client.gui.Gui.drawRect(i + 1, 0, i + pixelWidth + 1, b, hc); //health
                     GlStateManager.enableDepth();
                 } else if (type == 6) {
                     d3p(x, y, z, 0.699999988079071D, 45, 1.5F, color, color == 0);

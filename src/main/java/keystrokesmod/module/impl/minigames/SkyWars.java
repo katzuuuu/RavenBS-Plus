@@ -125,7 +125,7 @@ public class SkyWars extends Module {
                 if (AntiBot.isBot(entityPlayer)) {
                     continue;
                 }
-                RenderUtils.renderEntity(entityPlayer, 2, 0, 0, strengthColor, false);
+                RenderUtils.renderEntity(entityPlayer, 2, 0, 0, strengthColor, false, 0D);
             }
         }
         if (renderTimeWarp.isToggled()) {

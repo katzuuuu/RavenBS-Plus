@@ -7,7 +7,9 @@ plugins {
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
-
+dependencies {
+    implementation("org.java-websocket:Java-WebSocket:1.5.3")
+}
 val baseGroup: String by project
 val mcVersion: String by project
 val version: String by project
