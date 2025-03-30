@@ -23,6 +23,7 @@ import java.util.List;
 public class ModuleManager {
     public static List<Module> modules = new ArrayList<>();
     public static List<Module> organizedModules = Collections.synchronizedList(new ArrayList<>());
+    public static AntiVoid antiVoid;
     public static Module nameHider;
     public static Module fastPlace;
     public static MurderMystery murderMystery;
@@ -71,6 +72,7 @@ public class ModuleManager {
     public static ChatCommands chatCommands;
 
     public void register() {
+        this.addModule(antiVoid = new AntiVoid());
         this.addModule(autoClicker = new AutoClicker());
         this.addModule(longJump = new LongJump());
         this.addModule(new AimAssist());

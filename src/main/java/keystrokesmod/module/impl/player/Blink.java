@@ -4,6 +4,7 @@ import keystrokesmod.Raven;
 import keystrokesmod.event.PreUpdateEvent;
 import keystrokesmod.event.SendPacketEvent;
 import keystrokesmod.module.Module;
+import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.setting.impl.ButtonSetting;
 import keystrokesmod.module.setting.impl.SliderSetting;
 import keystrokesmod.utility.PacketUtils;
@@ -90,6 +91,9 @@ public class Blink extends Module {
             }
         }
         if (blinkTicks >= 99999) {
+            disable();
+        }
+        if (ModuleManager.antiVoid.started) {
             disable();
         }
     }

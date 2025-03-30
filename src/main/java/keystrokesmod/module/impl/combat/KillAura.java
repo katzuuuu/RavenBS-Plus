@@ -176,6 +176,13 @@ public class KillAura extends Module {
 
     @SubscribeEvent
     public void onPreUpdate(PreUpdateEvent e) {
+        if (ModuleManager.antiVoid.started) {
+            if (blinking.get() || lag) {
+                resetBlinkState(true);
+            }
+            setTarget(null);
+            return;
+        }
         wasUsing = mc.thePlayer.isUsingItem();
         if (mc.currentScreen == null || mc.currentScreen.allowUserInput) {
             boolean pressedLeft = Mouse.isButtonDown(0);
