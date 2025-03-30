@@ -1,4 +1,4 @@
-# Raven bS
+# Raven BS+
 
 Raven B4, but for those who can't afford it, or too paranoid to get it. We highly value our user's privacy.
 
