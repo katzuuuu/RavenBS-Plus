@@ -15,18 +15,18 @@ import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
-public class Bhop extends Module {
+public class BHop extends Module {
     public SliderSetting mode;
     public static SliderSetting speedSetting;
     private ButtonSetting liquidDisable;
     private ButtonSetting sneakDisable;
     public ButtonSetting rotateYaw;
     private ButtonSetting airStrafe;
-    private int Strafies;
-    public String[] modes = new String[] {"Strafe", "Ground", "Semi", "8 tick", "9 tick"};
+    private int Strafes;
+    public String[] modes = new String[] {"Strafe", "Ground", "7 tick", "8 tick"};
     public boolean hopping, lowhop, didMove, collided, setRotation;
 
-    public Bhop() {
+    public BHop() {
         super("BHop", Module.category.movement);
         this.registerSetting(mode = new SliderSetting("Mode", 0, modes));
         this.registerSetting(speedSetting = new SliderSetting("Speed", 2.0, 0.5, 8.0, 0.1));
@@ -37,6 +37,7 @@ public class Bhop extends Module {
     }
 
     @Override
+    public String getInfo() {
         int modeValue = (int) mode.getInput();
         if (modeValue == 2 || modeValue == 3 || modeValue == 4) {
             return "Semi";
@@ -63,9 +64,6 @@ public class Bhop extends Module {
             return;
         }
         if (ModuleManager.scaffold.moduleEnabled && (ModuleManager.tower.canTower() || ModuleManager.scaffold.fastScaffoldKeepY)) {
-            return;
-        }
-        if (!Utils.isMoving()) {
             return;
         }
         if (mode.getInput() >= 1) {
@@ -155,43 +153,30 @@ public class Bhop extends Module {
                     }
                 }
                 break;
-            case 4:
-                if (mode.getInput() == 4 && didMove) {
-                    int simpleY = (int) Math.round((e.posY % 1) * 10000);
-
-                    if (mc.thePlayer.hurtTime == 0 && !collided) {
-                        switch (simpleY) {
-                            case 13 :
-                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.02483;
-                                break;
-                            case 2000:
-                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.16874;
-                        }
-                    }
-                }
-                break;
         }
     }
+
+
 
     @SubscribeEvent
     public void onPreUpdate(PreUpdateEvent e) {
         if (canstrafe()) {
-            Strafies = mc.thePlayer.onGround ? 0 : Strafies + 1;
+            Strafes = mc.thePlayer.onGround ? 0 : Strafes + 1;
 
             if (mc.thePlayer.fallDistance > 1 || mc.thePlayer.onGround) {
-                Strafies = 0;
+                Strafes = 0;
                 return;
             }
 
-            if (Strafies == 1) {
+            if (Strafes == 1) {
                 strafe();
             }
 
-            if (!blockRelativeToPlayer(0, mc.thePlayer.motionY, 0).getUnlocalizedName().contains("air") && Strafies > 2) {
+            if (!blockRelativeToPlayer(0, mc.thePlayer.motionY, 0).getUnlocalizedName().contains("air") && Strafes > 2) {
                 strafe();
             }
 
-            if (airStrafe.isToggled() && Strafies >= 2 && (!blockRelativeToPlayer(0, mc.thePlayer.motionY * 3, 0).getUnlocalizedName().contains("air") || Strafies == 9) && !ModuleManager.scaffold.isEnabled()) {
+            if (airStrafe.isToggled() && Strafes >= 2 && (!blockRelativeToPlayer(0, mc.thePlayer.motionY * 3, 0).getUnlocalizedName().contains("air") || Strafes == 9) && !ModuleManager.scaffold.isEnabled()) {
                 mc.thePlayer.motionY += 0.0754;
                 strafe();
             }
@@ -221,6 +206,6 @@ public class Bhop extends Module {
     @Override
     public void onDisable() {
         hopping = false;
-        Strafies = 0;
+        Strafes = 0;
     }
 }
