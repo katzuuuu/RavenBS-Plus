@@ -121,10 +121,6 @@ public class ScriptDefaults {
             Utils.sendRawMessage(s);
         }
 
-        public static void print(Message component) {
-            mc.thePlayer.addChatMessage(component.component);
-        }
-
         public static boolean isDiagonal() {
             return Utils.isDiagonal(false);
         }
@@ -267,8 +263,8 @@ public class ScriptDefaults {
             return mc.thePlayer.getItemInUseDuration();
         }
 
-        public static void log(final Object obj) {
-            Utils.log.info(obj);
+        public static void log(String message) {
+            System.out.println(message);
         }
 
         public static void setSneaking(boolean sneak) {
@@ -851,7 +847,7 @@ public class ScriptDefaults {
             if (setting == null) {
                 return;
             }
-            setting.setValueRawWithEvent(value);
+            setting.setValue(value);
         }
 
         public void setKey(String moduleName, String name, int code) {
@@ -1425,13 +1421,9 @@ public class ScriptDefaults {
         public static List<String> getBookContents() {
             if (mc.currentScreen instanceof GuiScreenBook) {
                 List<String> contents = new ArrayList<>();
-                List<IChatComponent> bookContents = ((IAccessorGuiScreenBook) mc.currentScreen).getBookContents();
-                if (bookContents == null) {
-                    return contents;
-                }
-                int max = Math.min(128 / mc.fontRendererObj.FONT_HEIGHT, bookContents.size());
+                int max = Math.min(128 / mc.fontRendererObj.FONT_HEIGHT, ((IAccessorGuiScreenBook) mc.currentScreen).getBookContents().size());
                 for (int line = 0; line < max; ++line) {
-                    IChatComponent lineStr = bookContents.get(line);
+                    IChatComponent lineStr = ((IAccessorGuiScreenBook) mc.currentScreen).getBookContents().get(line);
                     contents.add(lineStr.getUnformattedText());
                 }
                 if (!contents.isEmpty()) {

@@ -5,7 +5,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import keystrokesmod.event.PostProfileLoadEvent;
-import keystrokesmod.event.PostSetSliderEvent;
 import keystrokesmod.keystroke.KeySrokeRenderer;
 import keystrokesmod.keystroke.KeyStrokeConfigGui;
 import keystrokesmod.keystroke.keystrokeCommand;
@@ -131,12 +130,7 @@ public class Raven {
 
     @SubscribeEvent
     public void onPostProfileLoad(PostProfileLoadEvent e) {
-        clickGui.onSliderChange();
-    }
-
-    @SubscribeEvent
-    public void onPostSetSlider(PostSetSliderEvent e) {
-        clickGui.onSliderChange();
+        clickGui.onProfileLoad();
     }
 
     @SubscribeEvent

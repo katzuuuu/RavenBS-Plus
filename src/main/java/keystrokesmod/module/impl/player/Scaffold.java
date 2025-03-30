@@ -34,7 +34,9 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Scaffold extends Module {
-    private final SliderSetting motion;
+    private final SliderSetting sprintScaffoldMotion;
+    private final SliderSetting fastScaffoldMotion;
+    private final SliderSetting AirMotion;
     public SliderSetting rotation;
     private SliderSetting sprint;
     private SliderSetting fastScaffold;
@@ -105,7 +107,9 @@ public class Scaffold extends Module {
 
     public Scaffold() {
         super("Scaffold", category.player);
-        this.registerSetting(motion = new SliderSetting("Motion", "x", 1.0, 0.5, 1.2, 0.01));
+        this.registerSetting(sprintScaffoldMotion = new SliderSetting("Sprint motion", "x", 1.0, 0.5, 1.2, 0.01));
+        this.registerSetting(fastScaffoldMotion = new SliderSetting("Fast scaffold motion", "x", 1.0, 0.5, 1.2, 0.01));
+        this.registerSetting(AirMotion = new SliderSetting("Air motion", "x", 1.0, 0.5, 1.2, 0.01));
         this.registerSetting(rotation = new SliderSetting("Rotation", 1, rotationModes));
         this.registerSetting(sprint = new SliderSetting("Sprint mode", 0, sprintModes));
         this.registerSetting(fastScaffold = new SliderSetting("Fast scaffold", 0, fastScaffoldModes));
@@ -259,23 +263,10 @@ public class Scaffold extends Module {
                 float blockYawOffset = MathHelper.wrapAngleTo180_float(yawBackwards - blockYaw);
                 int quadVal = 0;
 
-                float minPitch = 78.650f;
+                float minPitch = 86.650f;
 
                 float firstStraight = 123.50f;
-                float secondStraight = 125.50f;
-                float thirdStraight = 127.50f;
-                float firstDiag = 128.50f;
-                float secondDiag = 130.50f;
-                float thirdDiag = 132.50f;
-                float fourthDiag = 138f;
-
                 float firstOffset = 16;
-                float secondOffset = 14;
-                float thirdOffset = 10;
-                float fourthOffset = 9;
-                float fifthOffset = 8;
-                float sixthOffset = 5;
-                float seventhOffset = 2;
 
                 //first straight
                 if (quad <= 5 || quad >= 85) {
@@ -283,56 +274,34 @@ public class Scaffold extends Module {
                     minOffset = firstOffset;
                     quadVal = 1;
                 }
-                else if (quad > 5 || quad < 85) {
+                if (quad <= 5 || quad >= 85) {
+                    yawAngle = 125.625F;
+                    minOffset = 10;
+                }
+                if (quad > 5 && quad <= 15 || quad >= 75 && quad < 85) {
+                    yawAngle = 127.625F;
+                    minOffset = 10;
+                }
+                if (quad > 15 && quad <= 25 || quad >= 65 && quad < 75) {
+                    yawAngle = 129.625F;
+                    minOffset = 8;
+                }
+                if (quad > 25 && quad <= 32 || quad >= 58 && quad < 65) {
+                    yawAngle = 132.625F;
+                    minOffset = 8;
+                }
+                if (quad > 32 && quad <= 38 || quad >= 52 && quad < 58) {
+                    yawAngle = 134.625F;
+                    minOffset = 7;
+                }
+                if (quad > 38 && quad <= 42 || quad >= 48 && quad < 52) {
+                    yawAngle = 136.625F;
+                    minOffset = 6;
+                }
+                if (quad > 42 && quad <= 45 || quad >= 45 && quad < 48) {
+                    yawAngle = 140.125F;
+                    minOffset = 5;
 
-                    //second straight
-                    if (quad >= 80 || quad < 10) {
-                        yawAngle = secondStraight;
-                        minOffset = secondOffset;
-                        quadVal = 2;
-
-                        //third straight
-                    } else if (quad >= 65 || quad < 25) {
-                        yawAngle = thirdStraight;
-                        minOffset = thirdOffset;
-                        quadVal = 3;
-
-                        //first diag
-                    } else if (quad >= 55 || quad < 35) {
-                        yawAngle = firstDiag;
-                        minOffset = fourthOffset;
-                        quadVal = 4;
-
-                        //second diag
-                    } else if (quad >= 15 && quad < 45) {
-                        yawAngle = secondDiag;
-                        minOffset = fifthOffset;
-                        quadVal = 5;
-                        if (quad >= 38) {
-                            yawAngle = thirdDiag;
-                            minOffset = sixthOffset;
-                            quadVal = 6;
-                            if (quad >= 42) {
-                                yawAngle = fourthDiag;
-                                minOffset = seventhOffset;
-                                quadVal = 7;
-                            }
-                        }
-                    } else {
-                        yawAngle = secondDiag;
-                        minOffset = fifthOffset;
-                        quadVal = 5;
-                        if (quad >= 45 && quad < 52) {
-                            yawAngle = thirdDiag;
-                            minOffset = sixthOffset;
-                            quadVal = 6;
-                            if (quad < 48) {
-                                yawAngle = fourthDiag;
-                                minOffset = seventhOffset;
-                                quadVal = 7;
-                            }
-                        }
-                    }
                 }
 
                 if (firstStroke > 0 && (System.currentTimeMillis() - firstStroke) > strokeDelay) {
@@ -638,12 +607,7 @@ public class Scaffold extends Module {
     @Override
     public String getInfo() {
         String info;
-        if (fastOnRMB.isToggled()) {
-            info = Mouse.isButtonDown(1) && Utils.tabbedIn() ? fastScaffoldModes[(int) fastScaffold.getInput()] : sprintModes[(int) sprint.getInput()];
-        }
-        else {
-            info = fastScaffold.getInput() > 0 ? fastScaffoldModes[(int) fastScaffold.getInput()] : sprintModes[(int) sprint.getInput()];
-        }
+        info = sprintModes[(int) sprint.getInput()];
         return info;
     }
 
@@ -937,11 +901,19 @@ public class Scaffold extends Module {
     }
 
     private void handleMotion() {
-        if (ModuleManager.tower.canTower() || !mc.thePlayer.onGround || motion.getInput() == 1) {
+        if (ModuleManager.tower.canTower()) {
             return;
         }
-        mc.thePlayer.motionX *= motion.getInput();
-        mc.thePlayer.motionZ *= motion.getInput();
+        if (!mc.thePlayer.onGround) {
+            mc.thePlayer.motionX *= AirMotion.getInput();
+            mc.thePlayer.motionZ *= AirMotion.getInput();
+        } else if (usingFastScaffold()) {
+            mc.thePlayer.motionX *= fastScaffoldMotion.getInput();
+            mc.thePlayer.motionZ *= fastScaffoldMotion.getInput();
+        } else {
+            mc.thePlayer.motionX *= sprintScaffoldMotion.getInput();
+            mc.thePlayer.motionZ *= sprintScaffoldMotion.getInput();
+        }
     }
 
     public float hardcodedYaw() {

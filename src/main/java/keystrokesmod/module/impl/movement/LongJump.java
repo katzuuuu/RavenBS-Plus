@@ -8,15 +8,12 @@ import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.setting.impl.ButtonSetting;
 import keystrokesmod.module.setting.impl.KeySetting;
 import keystrokesmod.module.setting.impl.SliderSetting;
-import keystrokesmod.utility.ModHelper;
 import keystrokesmod.utility.Utils;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
@@ -48,7 +45,6 @@ public class LongJump extends Module {
     private boolean notMoving;
     private boolean enabled;
     public boolean function;
-    private Double startY;
 
     private int boostTicks;
     private int lastSlot = -1;
@@ -101,15 +97,16 @@ public class LongJump extends Module {
         disabled();
     }
 
-    @SubscribeEvent
-    public void onCollision(CollisionEvent event) {
-        if (this.startY != null && !manual.isToggled() && boostTicks <= 0) {
-            BlockPos blockPos = event.blockPos;
-            if (event.block.isPassable(mc.theWorld, blockPos) && blockPos.getY() <= this.startY) {
-                event.boundingBox = new AxisAlignedBB(blockPos.getX() - 2.0D, blockPos.getY() - 1.0D, blockPos.getZ() - 2.0D, blockPos.getX() + 2.0D, blockPos.getY() + 1.0D, blockPos.getZ() + 2.0D);
-            }
+    /*public boolean onChat(String chatMessage) {
+        String msg = util.strip(chatMessage);
+
+        if (msg.equals("Build height limit reached!")) {
+            client.print("fb fly build height");
+            modules.disable(scriptName);
+            return false;
         }
-    }
+        return true;
+    }*/
 
     @SubscribeEvent
     public void onPreUpdate(PreUpdateEvent e) {
@@ -126,17 +123,6 @@ public class LongJump extends Module {
         if (manual.isToggled() && disableKey.isPressed() && Utils.jumpDown()) {
             function = false;
             disabled();
-        }
-
-        if (!function) {
-            if (manual.isToggled() && !enabled) {
-                if (ModHelper.threwFireballLow) {
-                    ModuleManager.velocity.disable = true;
-                    ModuleManager.antiKnockback.disable = true;
-                    enabled();
-                }
-            }
-            return;
         }
 
         if (enabled) {
@@ -317,7 +303,6 @@ public class LongJump extends Module {
         ModuleManager.bHop.disable();
 
         stopModules = true;
-        startY = mc.thePlayer.posY;
     }
 
     private void disabled() {
@@ -328,7 +313,6 @@ public class LongJump extends Module {
         if (!manual.isToggled()) {
             disable();
         }
-        startY = null;
     }
 
     private int setupFireballSlot(boolean pre) {
@@ -363,11 +347,15 @@ public class LongJump extends Module {
         return 0;
     }
 
-    private void modifyHorizontal() {
+    // only apply horizontal boost once
+    void modifyHorizontal() {
         if (boostSetting.getInput() != 0) {
+            //client.print("&7horizontal &b" + boostTicks + " " + client.getPlayer().getHurtTime());
+
             double speed = boostSetting.getInput() - Utils.randomizeDouble(0.0001, 0);
             if (Utils.isMoving()) {
                 Utils.setSpeed(speed);
+                //Utils.sendMessage("og speed");
             }
         }
     }

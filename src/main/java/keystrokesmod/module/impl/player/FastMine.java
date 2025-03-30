@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Mouse;
 
-public class FastMine extends Module {
+public class FastMine extends Module { // from b4 src
     private SliderSetting delay;
     public SliderSetting multiplier;
     private SliderSetting mode;
@@ -35,7 +35,7 @@ public class FastMine extends Module {
     }
 
     @SubscribeEvent
-    public void onPlayerTick(TickEvent.PlayerTickEvent e) {
+    public void a(TickEvent.PlayerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || !mc.inGameHasFocus || !Utils.nullCheck()) {
             return;
         }

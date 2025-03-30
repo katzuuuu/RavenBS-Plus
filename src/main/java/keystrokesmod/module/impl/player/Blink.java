@@ -5,6 +5,7 @@ import keystrokesmod.event.PreUpdateEvent;
 import keystrokesmod.event.SendPacketEvent;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.setting.impl.ButtonSetting;
+import keystrokesmod.module.setting.impl.SliderSetting;
 import keystrokesmod.utility.PacketUtils;
 import keystrokesmod.utility.RenderUtils;
 import keystrokesmod.utility.Utils;
@@ -25,15 +26,18 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Blink extends Module {
     private ButtonSetting initialPosition;
+    private static SliderSetting maxBlinkTicks;
     private ConcurrentLinkedQueue<Packet> blinkedPackets = new ConcurrentLinkedQueue<>();
 
     private Vec3 pos;
     private int color = new Color(0, 255, 0).getRGB();
     private int blinkTicks;
+    private boolean enabled;
 
     public Blink() {
         super("Blink", category.player);
         this.registerSetting(initialPosition = new ButtonSetting("Show initial position", true));
+        this.registerSetting(maxBlinkTicks = new SliderSetting("Maximal blink ticks.", "", 0, 0, 40, 1));
     }
 
     @Override
@@ -78,7 +82,16 @@ public class Blink extends Module {
 
     @SubscribeEvent
     public void onPreUpdate(PreUpdateEvent e) {
-        ++blinkTicks;
+        if (enabled) ++blinkTicks;
+
+        if (maxBlinkTicks.getInput() != 0) {
+            if (blinkTicks >= maxBlinkTicks.getInput()) {
+                disable();
+            }
+        }
+        if (blinkTicks >= 99999) {
+            disable();
+        }
     }
 
     @SubscribeEvent

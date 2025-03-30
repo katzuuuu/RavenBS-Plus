@@ -4,6 +4,7 @@ import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.impl.combat.AntiKnockback;
 import keystrokesmod.module.impl.combat.Velocity;
+import keystrokesmod.module.impl.movement.BHop;
 import keystrokesmod.module.setting.impl.ButtonSetting;
 import keystrokesmod.module.setting.impl.DescriptionSetting;
 import keystrokesmod.module.setting.impl.SliderSetting;
@@ -123,6 +124,9 @@ public class HUD extends Module {
                     String moduleName = module.getNameInHud();
                     if (module instanceof AntiKnockback) {
                         moduleName = "Velocity";
+                    }
+                    if (module instanceof BHop) {
+                        moduleName = "Bhop";
                     }
                     if (showInfo.isToggled() && !module.getInfo().isEmpty()) {
                         moduleName += " §7" + module.getInfo();

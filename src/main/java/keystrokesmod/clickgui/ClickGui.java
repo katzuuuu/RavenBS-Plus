@@ -89,7 +89,7 @@ public class ClickGui extends GuiScreen {
         }
         (this.commandLineInput = new GuiTextField(1, this.mc.fontRendererObj, 22, this.height - 100, 150, 20)).setMaxStringLength(256);
         this.buttonList.add(this.commandLineSend = new GuiButtonExt(2, 22, this.height - 70, 150, 20, "Send"));
-        this.commandLineSend.visible = CommandLine.opened;
+        this.commandLineSend.visible = CommandLine.a;
         this.previousScale = (int) Gui.guiScale.getInput();
     }
 
@@ -142,17 +142,17 @@ public class ClickGui extends GuiScreen {
         }
 
 
-        if (CommandLine.opened) {
+        if (CommandLine.a) {
             if (!this.commandLineSend.visible) {
                 this.commandLineSend.visible = true;
             }
 
-            r = CommandLine.animate.isToggled() ? CommandLine.animation.getValueInt(0, 200, 2) : 200;
-            if (CommandLine.closed) {
+            r = CommandLine.animate.isToggled() ? CommandLine.an.getValueInt(0, 200, 2) : 200;
+            if (CommandLine.b) {
                 r = 200 - r;
                 if (r == 0) {
-                    CommandLine.closed = false;
-                    CommandLine.opened = false;
+                    CommandLine.b = false;
+                    CommandLine.a = false;
                     this.commandLineSend.visible = false;
                 }
             }
@@ -167,66 +167,62 @@ public class ClickGui extends GuiScreen {
             this.commandLineInput.drawTextBox();
             super.drawScreen(x, y, p);
         }
-        else if (CommandLine.closed) {
-            CommandLine.closed = false;
+        else if (CommandLine.b) {
+            CommandLine.b = false;
         }
     }
 
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if (mouseButton == 0) {
-            boolean draggingAssigned = false;
-            for (int i = categories.size() - 1; i >= 0; i--) {
-                CategoryComponent category = categories.get(i);
-                if (!draggingAssigned && category.draggable(mouseX, mouseY)) {
-                    category.overTitle(true);
-                    category.xx = mouseX - category.getX();
-                    category.yy = mouseY - category.getY();
-                    category.dragging = true;
-                    draggingAssigned = true;
-                }
-                else {
-                    category.overTitle(false);
-                }
-            }
-        }
+    public void mouseClicked(int x, int y, int m) throws IOException {
+        Iterator var4 = categories.iterator();
 
-        if (mouseButton == 1) {
-            boolean toggled = false;
-            for (int i = categories.size() - 1; i >= 0; i--) {
-                CategoryComponent category = categories.get(i);
-                if (!toggled && category.overTitle(mouseX, mouseY)) {
-                    category.mouseClicked(!category.isOpened());
-                    toggled = true;
-                }
-            }
-        }
+        while (true) {
+            CategoryComponent category;
+            do {
+                do {
+                    if (!var4.hasNext()) {
+                        if (CommandLine.a) {
+                            this.commandLineInput.mouseClicked(x, y, m);
+                            super.mouseClicked(x, y, m);
+                        }
 
-        for (CategoryComponent category : categories) {
-            if (category.isOpened() && !category.getModules().isEmpty() && category.overRect(mouseX, mouseY)) {
-                for (ModuleComponent component : category.getModules()) {
-                    if (component.onClick(mouseX, mouseY, mouseButton)) {
-                        category.openModule(component);
+                        return;
                     }
+
+                    category = (CategoryComponent) var4.next();
+                    if (category.v(x, y) && !category.i(x, y) && m == 0) {
+                        category.overTitle(true);
+                        category.xx = x - category.getX();
+                        category.yy = y - category.getY();
+                    }
+
+                    if (category.overTitle(x, y) && m == 1) {
+                        category.mouseClicked(!category.isOpened());
+                    }
+
+                    if (category.i(x, y) && m == 0) {
+                        category.cv(!category.p());
+                    }
+                } while (!category.isOpened());
+            } while (category.getModules().isEmpty());
+
+            for (Component c : category.getModules()) {
+                if (c.onClick(x, y, m) && c instanceof ModuleComponent) {
+                    category.openModule((ModuleComponent) c);
                 }
             }
-        }
 
-        if (CommandLine.opened) {
-            this.commandLineInput.mouseClicked(mouseX, mouseY, mouseButton);
-            super.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
 
-
-    public void mouseReleased(int x, int y, int button) {
-        if (button == 0) {
+    public void mouseReleased(int x, int y, int s) {
+        if (s == 0) {
             Iterator<CategoryComponent> iterator = categories.iterator();
             while (iterator.hasNext()) {
                 CategoryComponent category = iterator.next();
                 category.overTitle(false);
                 if (category.isOpened() && !category.getModules().isEmpty()) {
                     for (Component module : category.getModules()) {
-                        module.mouseReleased(x, y, button);
+                        module.mouseReleased(x, y, s);
                     }
                 }
             }
@@ -265,8 +261,7 @@ public class ClickGui extends GuiScreen {
     public void keyTyped(char t, int k) {
         if (k == Keyboard.KEY_ESCAPE && !binding()) {
             this.mc.displayGuiScreen(null);
-        }
-        else {
+        } else {
             Iterator<CategoryComponent> iterator = categories.iterator();
             while (iterator.hasNext()) {
                 CategoryComponent category = iterator.next();
@@ -277,7 +272,7 @@ public class ClickGui extends GuiScreen {
                     }
                 }
             }
-            if (CommandLine.opened) {
+            if (CommandLine.a) {
                 String cm = this.commandLineInput.getText();
                 if (k == 28 && !cm.isEmpty()) {
                     Commands.rCMD(this.commandLineInput.getText());
@@ -312,7 +307,6 @@ public class ClickGui extends GuiScreen {
         this.mc.gameSettings.guiScale = originalScale;
     }
 
-    @Override
     public boolean doesGuiPauseGame() {
         return false;
     }
@@ -330,10 +324,10 @@ public class ClickGui extends GuiScreen {
         return false;
     }
 
-    public void onSliderChange() {
+    public void onProfileLoad() {
         for (CategoryComponent c : categories) {
             for (ModuleComponent m : c.getModules()) {
-                m.onSliderChange();
+                m.onProfileLoad();
             }
         }
     }

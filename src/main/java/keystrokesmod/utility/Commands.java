@@ -175,13 +175,13 @@ public class Commands {
 
                 switch (args[1]) {
                     case "fly":
-                        Fly.horizontalSpeed.setValueRawWithEvent(value);
+                        Fly.horizontalSpeed.setValueRaw(value);
                         break;
                     case "bhop":
-                        BHop.speedSetting.setValueRawWithEvent(value);
+                        BHop.speedSetting.setValueRaw(value);
                         break;
                     case "speed":
-                        Speed.speed.setValueRawWithEvent(value);
+                        Speed.speed.setValueRaw(value);
                         break;
                     default:
                         print(invSyn, 1);
@@ -218,11 +218,11 @@ public class Commands {
                 switch (args[1]) {
                     case "horizontal":
                     case "h":
-                        Velocity.horizontal.setValueRawWithEvent(value);
+                        Velocity.horizontal.setValueRaw(value);
                         break;
                     case "vertical":
                     case "v":
-                        Velocity.vertical.setValueRawWithEvent(value);
+                        Velocity.vertical.setValueRaw(value);
                         break;
                     default:
                         print(invSyn, 1);
@@ -500,7 +500,7 @@ public class Commands {
         ccs = cs.get(val);
     }
 
-    public static void onDisable() {
+    public static void od() {
         Ping.reset(false);
     }
 }

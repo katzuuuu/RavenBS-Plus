@@ -17,7 +17,7 @@ public class BHop extends Module {
     private ButtonSetting liquidDisable;
     private ButtonSetting sneakDisable;
     public ButtonSetting rotateYaw;
-    public String[] modes = new String[] {"Strafe", "Ground", "8 tick", "7 tick"};
+    public String[] modes = new String[] {"Strafe", "Ground", "7 tick", "8 tick"};
     public boolean hopping, lowhop, didMove, collided, setRotation;
 
     public BHop() {
@@ -31,7 +31,11 @@ public class BHop extends Module {
 
     @Override
     public String getInfo() {
-        return modes[(int) mode.getInput()];
+        int modeValue = (int) mode.getInput();
+        if (modeValue == 2 || modeValue == 3) {
+            return "Low";
+        }
+        return modes[modeValue];
     }
 
     @SubscribeEvent
@@ -53,9 +57,6 @@ public class BHop extends Module {
             return;
         }
         if (ModuleManager.scaffold.moduleEnabled && (ModuleManager.tower.canTower() || ModuleManager.scaffold.fastScaffoldKeepY)) {
-            return;
-        }
-        if (!Utils.isMoving()) {
             return;
         }
         if (mode.getInput() >= 1) {
@@ -112,11 +113,16 @@ public class BHop extends Module {
 
                     if (mc.thePlayer.hurtTime == 0 && !collided) {
                         switch (simpleY) {
-                            case 13:
-                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.02483;
+                            case 4200:
+                                mc.thePlayer.motionY = 0.39;
+                                lowhop = true;
                                 break;
-                            case 2000:
-                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.1913;
+                            case 1138:
+                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.13;
+                                lowhop = false;
+                                break;
+                            case 2031:
+                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.2;
                                 didMove = false;
                                 break;
                         }
@@ -129,16 +135,11 @@ public class BHop extends Module {
 
                     if (mc.thePlayer.hurtTime == 0 && !collided) {
                         switch (simpleY) {
-                            case 4200:
-                                mc.thePlayer.motionY = 0.39;
-                                lowhop = true;
+                            case 13:
+                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.02483;
                                 break;
-                            case 1138:
-                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.13;
-                                lowhop = false;
-                                break;
-                            case 2031:
-                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.2;
+                            case 2000:
+                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.1913;
                                 didMove = false;
                                 break;
                         }

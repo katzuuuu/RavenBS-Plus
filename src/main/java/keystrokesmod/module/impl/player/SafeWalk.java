@@ -1,6 +1,5 @@
 package keystrokesmod.module.impl.player;
 
-import keystrokesmod.event.PreUpdateEvent;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.setting.impl.ButtonSetting;
@@ -11,6 +10,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
 public class SafeWalk extends Module {
@@ -18,6 +18,7 @@ public class SafeWalk extends Module {
     private SliderSetting motion;
     private ButtonSetting sneak;
     public static ButtonSetting blocksOnly, pitchCheck, disableOnForward;
+    public ButtonSetting tower;
 
     private int unsneakDelayTicks = 0;
     private boolean isSneaking;
@@ -30,6 +31,7 @@ public class SafeWalk extends Module {
         this.registerSetting(disableOnForward = new ButtonSetting("Disable on forward", false));
         this.registerSetting(pitchCheck = new ButtonSetting("Pitch check", false));
         this.registerSetting(sneak = new ButtonSetting("Sneak", false));
+        this.registerSetting(tower = new ButtonSetting("Tower", false));
     }
 
     @Override
@@ -50,7 +52,10 @@ public class SafeWalk extends Module {
     }
 
     @SubscribeEvent
-    public void onPreUpdate(PreUpdateEvent e) {
+    public void onTick(TickEvent.PlayerTickEvent e) {
+        if (e.phase != TickEvent.Phase.END) {
+            return;
+        }
         if (!sneak.isToggled() || !Utils.nullCheck()) {
             return;
         }

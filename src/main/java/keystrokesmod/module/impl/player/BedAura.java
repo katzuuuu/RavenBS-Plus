@@ -21,7 +21,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -138,6 +137,9 @@ public class BedAura extends Module {
                 noAutoBlockTicks = -3;
                 return;
             case -3:
+                noAutoBlockTicks = -4;
+                return;
+            case -4:
                 stopAutoblock = false;
                 noAutoBlockTicks = 0;
                 return;
@@ -169,13 +171,6 @@ public class BedAura extends Module {
         }
     }
 
-    @SubscribeEvent
-    public void onWorldJoin(EntityJoinWorldEvent e) {
-        if (e.entity == mc.thePlayer) {
-            currentBlock = null;
-        }
-    }
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onPreMotion(PreMotionEvent e) {
         aiming = false;
@@ -198,7 +193,7 @@ public class BedAura extends Module {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onRenderWorld(RenderWorldLastEvent e) {
+    public void onRenderWorld(RenderWorldLastEvent renderWorldLastEvent) {
         if (!renderOutline.isToggled() || currentBlock == null || !Utils.nullCheck()) {
             return;
         }
@@ -224,7 +219,7 @@ public class BedAura extends Module {
     }
 
     public boolean cancelKnockback() {
-        return cancelKnockback.isToggled() && currentBlock != null && RotationUtils.inRange(currentBlock, range.getInput());
+        return this.isEnabled() && this.currentBlock != null && this.cancelKnockback.isToggled();
     }
 
     private BlockPos[] getBedPos() {

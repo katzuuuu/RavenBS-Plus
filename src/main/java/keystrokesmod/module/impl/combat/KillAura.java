@@ -17,7 +17,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityGiantZombie;
 import net.minecraft.entity.monster.EntityIronGolem;
-import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -177,7 +176,7 @@ public class KillAura extends Module {
 
     @SubscribeEvent
     public void onPreUpdate(PreUpdateEvent e) {
-        wasUsing = mc.gameSettings.keyBindUseItem.isKeyDown();
+        wasUsing = mc.thePlayer.isUsingItem();
         if (mc.currentScreen == null || mc.currentScreen.allowUserInput) {
             boolean pressedLeft = Mouse.isButtonDown(0);
             if (pressedLeft && !lastPressedLeft) {
@@ -383,7 +382,7 @@ public class KillAura extends Module {
         slot = Math.floorMod(mc.thePlayer.inventory.currentItem - slot, 9);
         ItemStack stack = mc.thePlayer.inventory.getStackInSlot(slot);
         if (stack != null && stack.getItem() instanceof ItemSword && wasUsing && Utils.lookingAtBlock()) {
-            onSwapSlot();
+            delayTicks = 1;
             if (Raven.debug) {
                 Utils.sendModuleMessage(this, "&7Scroll swap detected, setting delay to &b" + delayTicks + "&7. (&d" + mc.thePlayer.ticksExisted + "&7)");
             }
@@ -394,7 +393,7 @@ public class KillAura extends Module {
     public void onSlotUpdate(SlotUpdateEvent e) {
         ItemStack stack = mc.thePlayer.inventory.getStackInSlot(e.slot);
         if (stack != null && stack.getItem() instanceof ItemSword && wasUsing && Utils.lookingAtBlock()) {
-            onSwapSlot();
+            delayTicks = 1;
             if (Raven.debug) {
                 Utils.sendModuleMessage(this, "&7Swap detected, setting delay to &b" + delayTicks + "&7. (&d" + mc.thePlayer.ticksExisted + "&7)");
             }
@@ -417,23 +416,13 @@ public class KillAura extends Module {
         }
     }
 
-    public void onSwapSlot() {
-        delayTicks = 1;
-        if (autoBlockMode.getInput() > 0 && !manualBlock()) {
-            KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-        }
-    }
-
     public void onCustomMouse(int button, boolean state) {
-        if (autoBlockMode.getInput() == 3 || rotationMode.getInput() != 0) {
+        if (blinkAutoBlock() || autoBlockMode.getInput() == 3 || rotationMode.getInput() != 0) {
             return;
         }
         if (button == 1) {
             if (state) {
                 if (target != null) {
-                    if (blinkAutoBlock()) {
-                        return;
-                    }
                     if (basicCondition() && settingCondition()) {
                         if (!ModuleManager.bedAura.rotate) {
                             if (isLookingAtEntity()) {
@@ -453,18 +442,13 @@ public class KillAura extends Module {
             }
             else {
                 KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-                if (!blinkAutoBlock()) {
-                    Reflection.setItemInUse(blockingClient = false);
-                    sendUnBlock = true;
-                }
+                Reflection.setItemInUse(blockingClient = false);
+                sendUnBlock = true;
             }
         }
         else if (button == 0) {
             if (!state) {
                 delayTicks = 1;
-            }
-            if (blinkAutoBlock()) {
-                return;
             }
             if (mc.currentScreen == null && state && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && !Mouse.isButtonDown(1)) {
                 KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
@@ -719,9 +703,6 @@ public class KillAura extends Module {
             else {
                 return !golems.getOrDefault(entityCreature.getEntityId(), false);
             }
-        }
-        else if (entityCreature instanceof EntityPigZombie && Utils.getBedwarsStatus() != 2) {
-            return false;
         }
         return hostileMobs.contains(entityCreature);
     }

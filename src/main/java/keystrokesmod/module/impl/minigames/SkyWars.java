@@ -182,9 +182,6 @@ public class SkyWars extends Module {
                     return;
                 }
                 Class<? extends Entity> oclass = EntityList.stringToClassMapping.get(ItemMonsterPlacer.getEntityName(p.getStack()));
-                if (oclass == null) {
-                    return;
-                }
                 entitySpawnQueue.put(oclass.getSimpleName(), new SpawnEggInfo(p.getPosition(), mc.thePlayer.ticksExisted));
             }
         }

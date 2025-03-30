@@ -82,7 +82,7 @@ public class BedWars extends Module {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onRenderWorld(RenderWorldLastEvent e) {
-        if (Utils.nullCheck() && obsidian.isToggled()) {
+        if (Utils.nullCheck()) {
             if (this.obsidianPos.isEmpty()) {
                 return;
             }
@@ -196,9 +196,6 @@ public class BedWars extends Module {
             if (p.getPlacedBlockDirection() != 255 && p.getStack() != null && p.getStack().getItem() != null) {
                 if (p.getStack().getItem() instanceof ItemMonsterPlacer) {
                     Class<? extends Entity> oclass = EntityList.stringToClassMapping.get(ItemMonsterPlacer.getEntityName(p.getStack()));
-                    if (oclass == null) {
-                        return;
-                    }
                     if (oclass.getSimpleName().equals("EntityIronGolem")) {
                         entitySpawnQueue.add(new SkyWars.SpawnEggInfo(p.getPosition(), mc.thePlayer.ticksExisted));
                     }
