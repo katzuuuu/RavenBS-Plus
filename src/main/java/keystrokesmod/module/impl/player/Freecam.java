@@ -148,8 +148,8 @@ public class Freecam extends Module {
             if (!showArm.isToggled()) {
                 mc.thePlayer.renderArmPitch = mc.thePlayer.prevRenderArmPitch = 700.0F;
             }
-            RenderUtils.renderEntity(mc.thePlayer, 1, 0.0D, 0.0D, Color.green.getRGB(), false);
-            RenderUtils.renderEntity(mc.thePlayer, 2, 0.0D, 0.0D, Color.green.getRGB(), false);
+            RenderUtils.renderEntity(mc.thePlayer, 1, 0.0D, 0.0D, Color.green.getRGB(), false, 0D);
+            RenderUtils.renderEntity(mc.thePlayer, 2, 0.0D, 0.0D, Color.green.getRGB(), false, 0D);
         }
 
     }

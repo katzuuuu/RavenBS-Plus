@@ -92,7 +92,7 @@ public class MurderMystery extends Module {
                         if (!highlightDead.isToggled() && getBoundingBoxVolume(en) <= 0.009) {
                             continue;
                         }
-                        RenderUtils.renderEntity(en, 2, 0.0D, 0.0D, rgb, false);
+                        RenderUtils.renderEntity(en, 2, 0.0D, 0.0D, rgb, false, 0D);
                     }
                 }
                 if (!goldEsp.isToggled()) {
